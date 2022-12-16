@@ -1,0 +1,22 @@
+- hosts: localhost
+  become: true
+  handlers:
+  tasks:
+    - name: Intalando docker
+    - shell:apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-compose
+
+    - name: Vagrant docker
+      shell: usermod -aG vagrant docker
+
+    - name: Docker-compose prometheus
+      shell: docker-compose up -d 
+      args:
+        chdir: /opt/prometheus/
+
+    - name: Instalando grafana
+    - shell: echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+    - shell: apt-get update | apt-get install grafana
+    - shell: systemctl daemon-reload
+    - shell: systemctl start grafana-server
+    - shell: systemctl enable grafana-server.service
+
